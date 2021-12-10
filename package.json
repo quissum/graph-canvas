@@ -2,7 +2,7 @@
   "name": "graph-canvas",
   "version": "1.0.0",
   "description": "",
-  "source": "./src/index.html",
+  "source": "./docs/index.html",
   "targets": {
     "default": {
       "distDir": "./public"
