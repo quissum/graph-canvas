@@ -2,10 +2,10 @@
   "name": "graph-canvas",
   "version": "1.0.0",
   "description": "",
-  "source": "./docs/index.html",
+  "source": "./src/index.html",
   "targets": {
     "default": {
-      "distDir": "./public"
+      "distDir": "./docs"
     }
   },
   "scripts": {
