@@ -5,7 +5,7 @@
   "source": "./src/index.html",
   "targets": {
     "default": {
-      "distDir": "./docs"
+      "distDir": "./public"
     }
   },
   "scripts": {
