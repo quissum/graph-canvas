@@ -8,7 +8,9 @@ const template = data => `
       return `
   <li class="tooltip-list-item">
     <div class="value" style="color: ${item.color}">${item.value}</div>
-    <div class="value" style="color: ${item.color}">${item.name}</div>
+    <div class="name" style="color: ${item.color}">${
+        item.name === '#0' ? 'Joined' : 'Left'
+      }</div>
   </li>
   `
     })

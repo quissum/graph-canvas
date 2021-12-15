@@ -5,24 +5,14 @@ export function compXRatio(WIDTH, length) {
   return WIDTH / (length - 2)
 }
 
-export function toDate(timestamp) {
-  const shortMonth = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
+export function toDate(timestamp, wDay) {
+  const options = {
+    day: 'numeric',
+    month: 'short',
+  }
+  if (wDay) Object.assign(options, { weekday: 'short' })
 
-  const data = new Date(timestamp)
-  return `${shortMonth[data.getMonth()]} ${data.getDate()}`
+  return new Intl.DateTimeFormat('en-UK', options).format(timestamp)
 }
 
 export function isOver(mouse, x, length, dWidth) {
@@ -32,12 +22,12 @@ export function isOver(mouse, x, length, dWidth) {
   return Math.abs(x - mouse.x) < width / 2
 }
 
-export function circle(context, [x, y], color) {
+export function circle(context, [x, y], color, mode) {
   const CIRCLE_RADIUS = 8
   context.save()
   context.beginPath()
   context.strokeStyle = color
-  context.fillStyle = '#fff'
+  context.fillStyle = mode ? '#222c37' : '#fff'
   context.arc(x, y, CIRCLE_RADIUS, 0, Math.PI * 2)
   context.fill()
   context.stroke()

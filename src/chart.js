@@ -1,5 +1,6 @@
 import { checkbox } from './checkbox'
 import { sliderChart } from './slider'
+import { changeMode } from './switchMode'
 import { tooltip } from './tooltip'
 import {
   circle,
@@ -51,6 +52,13 @@ export function chart(root, data) {
       },
     }
   )
+
+  //switchMode
+  const checkMode = root.querySelector('#switchMode')
+  checkMode.addEventListener('click', e => {
+    proxy.mode = changeMode(e.target.checked)
+  })
+  //====
 
   slider.subscribe(pos => {
     proxy.pos = pos
@@ -113,9 +121,7 @@ export function chart(root, data) {
     const checkboxEl = checkbox(root, data)
     checkboxEl.forEach(el => el.addEventListener('click', paint))
 
-    function checkboxVal() {
-      return checkboxEl.map(el => el.checked)
-    }
+    const checkboxVal = () => checkboxEl.map(el => el.checked)
     //===
 
     const left = Math.round((data.columns[0].length * proxy.pos[0]) / 100)
@@ -158,7 +164,7 @@ export function chart(root, data) {
 
         for (const [x, y] of coords) {
           if (isOver(proxy.mouse, x, coords.length, DPI_WIDTH)) {
-            circle(context, [x, y], color)
+            circle(context, [x, y], color, proxy.mode)
           }
         }
       })
@@ -175,7 +181,7 @@ export function chart(root, data) {
     context.moveTo(x, PADDING / 2)
     context.lineTo(x, DPI_HEIGHT - PADDING)
     context.lineWidth = 1
-    context.strokeStyle = '#bbb'
+    context.strokeStyle = proxy.mode ? '#0e141a' : '#bbb'
     context.stroke()
     context.restore()
   }
@@ -186,9 +192,9 @@ export function chart(root, data) {
 
     context.beginPath()
     context.lineWidth = 1
-    context.strokeStyle = '#bbb'
+    context.strokeStyle = proxy.mode ? '#0e141a' : '#bbb'
     context.font = 'normal 20px Helvetica,sans-serif'
-    context.fillStyle = '#96a2aa'
+    context.fillStyle = proxy.mode ? '#52677a' : '#96a2aa'
 
     for (let i = 1; i <= ROWS_COUNT; i++) {
       const y = step * i
@@ -219,7 +225,7 @@ export function chart(root, data) {
         tipLine(x)
 
         tipData = {
-          title: toDate(xData[i + 1]),
+          title: toDate(xData[i + 1], true),
           items: yData.map(col => ({
             color: data.colors[col[0]],
             name: data.names[col[0]],

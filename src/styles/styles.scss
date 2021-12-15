@@ -12,7 +12,7 @@
 
 body {
   font-family: sans-serif;
-  background: #666;
+  background: #fff;
 }
 
 .container {
@@ -36,9 +36,9 @@ body {
     z-index: 2;
   }
 
-  .tg-chart-slider {
+  &-slider {
     position: relative;
-    margin-bottom: 1rem;
+    margin: 1rem 0;
     z-index: 1;
 
     &__right,
@@ -87,7 +87,7 @@ body {
     }
   }
 
-  .tg-chart-tooltip {
+  &-tooltip {
     position: absolute;
     display: none;
     max-width: 200px;
@@ -97,7 +97,7 @@ body {
     border: 1px solid #dfe6eb;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.05);
     background: #fff;
-    color: #000;
+    color: #0e0e0e;
     overflow: hidden;
     z-index: 3;
 
@@ -124,6 +124,7 @@ body {
 
       .name {
         font-size: 0.8rem;
+        font-weight: normal;
       }
 
       .value {
@@ -132,76 +133,133 @@ body {
       }
     }
   }
-}
 
-.tg-chart-checkbox {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-  margin-right: 1rem;
-  border: 1px solid #e6ecf0;
-  padding: 0.5rem 0.8rem 0.5rem 0.5rem;
-  border-radius: 20px;
-  transition: border-color, color 0.22s ease-in-out;
+  &-checkbox {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    margin-right: 1rem;
+    border: 1px solid #e6ecf0;
+    padding: 0.5rem 0.8rem 0.5rem 0.5rem;
+    border-radius: 20px;
+    transition: border-color, color 0.22s ease-in-out;
 
-  input {
-    position: absolute;
-    left: 0;
-    top: 0;
-    min-width: 1rem;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    opacity: 0;
-    margin: 0;
-    padding: 0;
-    cursor: pointer;
+    input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      min-width: 1rem;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      opacity: 0;
+      margin: 0;
+      padding: 0;
+      cursor: pointer;
 
-    &:checked + label > span {
-      border: 9px solid;
-      animation-name: pulse;
-      animation-duration: 1.3s;
+      &:checked + label > span {
+        border: 9px solid;
+        animation-name: pulse;
+        animation-duration: 1.3s;
+      }
+
+      &:checked + label > span:before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        border-bottom: 2px solid transparent;
+        border-right: 2px solid transparent;
+        transform: rotate(45deg);
+        transform-origin: 0 100%;
+        animation-name: checkbox-check;
+        animation-duration: 125ms;
+        animation-delay: 250ms;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.23, 1);
+        animation-fill-mode: forwards;
+        //animation: checkbox-check 125ms 250ms cubic-bezier(.4, .0, .23, 1) forwards;
+      }
     }
 
-    &:checked + label > span:before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      border-bottom: 2px solid transparent;
-      border-right: 2px solid transparent;
-      transform: rotate(45deg);
-      transform-origin: 0 100%;
-      animation-name: checkbox-check;
-      animation-duration: 125ms;
-      animation-delay: 250ms;
-      animation-timing-function: cubic-bezier(0.4, 0, 0.23, 1);
-      animation-fill-mode: forwards;
-      //animation: checkbox-check 125ms 250ms cubic-bezier(.4, .0, .23, 1) forwards;
+    label {
+      position: relative;
+      font-weight: normal;
+      font-size: 0.8rem;
+      text-indent: 2rem;
+      color: #0e0e0e;
+
+      > span {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1px solid;
+        z-index: 0;
+        left: -2px;
+        top: -2px;
+        background-color: transparent;
+        transition: all 250ms cubic-bezier(0.4, 0, 0.23, 1);
+        animation-name: pulse2;
+        animation-duration: 1.3s;
+      }
     }
   }
 
-  label {
+  &-switchMode {
     position: relative;
-    font-weight: normal;
-    font-size: 0.8rem;
-    text-indent: 2rem;
-
-    > span {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 1px solid;
-      z-index: 0;
-      left: -2px;
-      top: -2px;
-      background-color: transparent;
-      transition: all 250ms cubic-bezier(0.4, 0, 0.23, 1);
-      animation-name: pulse2;
-      animation-duration: 1.3s;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    .switchMode {
+      position: relative;
+      display: inline-flex;
+      justify-content: center;
     }
+    input {
+      position: absolute;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      margin: 0;
+      padding: 0;
+      z-index: 2;
+      cursor: pointer;
+    }
+    label {
+      color: #2e84bc;
+      font-weight: normal;
+      font-size: 1rem;
+    }
+  }
+}
+
+body.night {
+  background: #222c37;
+  .card {
+    background: #222c37;
+  }
+  .tg-chart-slider {
+    &__right,
+    &__left {
+      background: #1e2732;
+    }
+    &__arrow--left,
+    &__arrow--right {
+      background: #3a4f61;
+    }
+  }
+  .tg-chart-tooltip {
+    border: 1px solid #1f2833;
+    box-shadow: 1px 1px 2px rgba(31, 40, 51, 0.1);
+    background: #222c37;
+    color: #cdd2d5;
+  }
+  .tg-chart-checkbox {
+    border: 1px solid #2e3a47;
+    color: #cdd2d5;
   }
 }
 
