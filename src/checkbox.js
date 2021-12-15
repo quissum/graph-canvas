@@ -1,16 +1,13 @@
 import { css } from './utils'
 
 export function checkbox(root, data) {
-  const checkJoined = root.querySelector('#joined')
-  const checkLeft = root.querySelector('#left')
-  const spanJoined = root.querySelector('[data-el="joinedSpan"]')
-  const spanLeft = root.querySelector('[data-el="leftSpan"]')
-
+  const checkEl = Array.from(root.querySelectorAll('[data-el="checkbox"]'))
+  const checkSpan = root.querySelectorAll('[data-el="checkSpan"]')
   const yData = data.columns.filter(col => data.types[col[0]] === 'line')
 
-  style([spanJoined, spanLeft], data, yData)
+  style(checkSpan, data, yData)
 
-  return [checkJoined, checkLeft]
+  return [checkEl, checkEl.map(el => el.checked)]
 }
 
 function style(spans, data, yData) {

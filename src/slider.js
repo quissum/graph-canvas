@@ -11,7 +11,7 @@ const HEIGHT = 40
 const DPI_HEIGHT = HEIGHT * 2
 function noop() {}
 
-export function sliderChart(root, data, WIDTH) {
+export function sliderChart(root, data, WIDTH, checkbox) {
   const DPI_WIDTH = WIDTH * 2
   const MIN_WIDTH = WIDTH * 0.05
 
@@ -126,7 +126,9 @@ export function sliderChart(root, data, WIDTH) {
   const [yMin, yMax] = computeBoundaries(data)
   const yRatio = compYRatio(DPI_HEIGHT, yMax, yMin)
   const xRatio = compXRatio(DPI_WIDTH, data.columns[0].length)
-  const yData = data.columns.filter(col => data.types[col[0]] === 'line')
+  const yData = data.columns
+    .filter(col => data.types[col[0]] === 'line')
+    .filter((_, i) => checkbox[i])
 
   yData
     .map(toCoords(xRatio, yRatio, DPI_HEIGHT, 0, yMin))

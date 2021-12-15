@@ -1,9 +1,6 @@
-export function compYRatio(HEIGHT, yMax, yMin) {
-  return HEIGHT / (yMax - yMin)
-}
-export function compXRatio(WIDTH, length) {
-  return WIDTH / (length - 2)
-}
+export const compYRatio = (HEIGHT, yMax, yMin) => HEIGHT / (yMax - yMin)
+
+export const compXRatio = (WIDTH, length) => WIDTH / (length - 2)
 
 export function toDate(timestamp, wDay) {
   const options = {
@@ -66,9 +63,7 @@ export function line(context, coords, color) {
   context.closePath()
 }
 
-export function css(el, styles = {}) {
-  return Object.assign(el.style, styles)
-}
+export const css = (el, styles = {}) => Object.assign(el.style, styles)
 
 export function toCoords(xRatio, yRatio, DPI_HEIGHT, PADDING, yMin) {
   return col =>
@@ -78,4 +73,14 @@ export function toCoords(xRatio, yRatio, DPI_HEIGHT, PADDING, yMin) {
         Math.floor(DPI_HEIGHT - PADDING - (y - yMin) * yRatio),
       ])
       .filter((_, i) => i !== 0)
+}
+
+export function tipLine(context, x, PADDING, DPI_HEIGHT, mode) {
+  context.save()
+  context.moveTo(x, PADDING / 2)
+  context.lineTo(x, DPI_HEIGHT - PADDING)
+  context.lineWidth = 1
+  context.strokeStyle = mode ? '#0e141a' : '#bbb'
+  context.stroke()
+  context.restore()
 }

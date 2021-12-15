@@ -12,6 +12,7 @@ import {
   toCoords,
   compXRatio,
   compYRatio,
+  tipLine,
 } from './utils'
 
 const WIDTH = 600
@@ -27,13 +28,9 @@ const SPEED = 50
 export function chart(root, data) {
   const canvas = root.querySelector('[data-el="main"]')
   const tip = tooltip(root.querySelector('[data-el="tooltip"]'))
-
-  const slider = sliderChart(
-    root.querySelector('[data-el="slider"]'),
-    data,
-    WIDTH
-  )
   const context = canvas.getContext('2d')
+  const [checkboxEl, checkboxVal] = checkbox(root, data)
+  const checkMode = root.querySelector('#switchMode')
 
   canvas.width = DPI_WIDTH
   canvas.height = DPI_HEIGHT
@@ -53,14 +50,32 @@ export function chart(root, data) {
     }
   )
 
+  const slider = () =>
+    sliderChart(
+      root.querySelector('[data-el="slider"]'),
+      data,
+      WIDTH,
+      proxy.checkboxVal
+    )
+
+  //checkbox
+  proxy.checkboxVal = checkboxVal
+  checkboxEl.forEach(el =>
+    el.addEventListener('click', () => {
+      proxy.checkboxVal = checkboxEl.map(el => el.checked)
+      slider().subscribe(pos => {
+        proxy.pos = pos
+      })
+    })
+  )
+
   //switchMode
-  const checkMode = root.querySelector('#switchMode')
   checkMode.addEventListener('click', e => {
     proxy.mode = changeMode(e.target.checked)
   })
   //====
 
-  slider.subscribe(pos => {
+  slider().subscribe(pos => {
     proxy.pos = pos
   })
 
@@ -117,20 +132,16 @@ export function chart(root, data) {
     console.log('paint')
     clear()
 
-    //checkbox
-    const checkboxEl = checkbox(root, data)
-    checkboxEl.forEach(el => el.addEventListener('click', paint))
-
-    const checkboxVal = () => checkboxEl.map(el => el.checked)
-    //===
-
     const left = Math.round((data.columns[0].length * proxy.pos[0]) / 100)
     const right = Math.round((data.columns[0].length * proxy.pos[1]) / 100)
 
     let columnsItem = 0
     const columns = data.columns
       .map((col, i) => {
-        if (data.types[col[0]] === 'line' && !checkboxVal()[i - columnsItem])
+        if (
+          data.types[col[0]] === 'line' &&
+          !proxy.checkboxVal[i - columnsItem]
+        )
           return
         if (data.types[col[0]] !== 'line') columnsItem++
 
@@ -176,16 +187,6 @@ export function chart(root, data) {
     context.clearRect(0, 0, DPI_WIDTH, DPI_HEIGHT)
   }
 
-  function tipLine(x) {
-    context.save()
-    context.moveTo(x, PADDING / 2)
-    context.lineTo(x, DPI_HEIGHT - PADDING)
-    context.lineWidth = 1
-    context.strokeStyle = proxy.mode ? '#0e141a' : '#bbb'
-    context.stroke()
-    context.restore()
-  }
-
   function yAxis(yMin, yMax) {
     const step = VIEW_HEIGHT / ROWS_COUNT
     const textStep = (yMax - yMin) / ROWS_COUNT
@@ -222,7 +223,7 @@ export function chart(root, data) {
       }
 
       if (isOver(proxy.mouse, x, xData.length - 1, DPI_WIDTH)) {
-        tipLine(x)
+        tipLine(context, x, PADDING, DPI_HEIGHT, proxy.mode)
 
         tipData = {
           title: toDate(xData[i + 1], true),
