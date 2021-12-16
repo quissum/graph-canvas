@@ -37,6 +37,7 @@ export function chart(root, data) {
   css(canvas, { width: WIDTH + 'px', height: HEIGHT + 'px' })
   let raf
   let prevVal = []
+  // let prevLength
   let tipData
 
   const proxy = new Proxy(
@@ -98,12 +99,36 @@ export function chart(root, data) {
     tip.hide()
   }
 
-  function animation(val) {
+  function animation(val, lengthVal) {
     const [min, max] = val.map(computeMinMax)
+    // const length = computeLength(lengthVal)
+
+    // function computeLength(length) {
+    //   const step = (length - prevLength) / SPEED
+    //   let res = proxy.options.length
+
+    //   if (length > prevLength) {
+    //     if (res < length) {
+    //       res += step
+    //     } else if (res > length) {
+    //       res = length
+    //       prevLength = length
+    //     }
+    //   } else {
+    //     if (res > length) {
+    //       res += step
+    //     } else if (res < length) {
+    //       res = length
+    //       prevLength = length
+    //     }
+    //   }
+
+    //   return res
+    // }
 
     function computeMinMax(val, i) {
       const step = (val - prevVal[i]) / SPEED
-      let res = proxy.minmax[i]
+      let res = proxy.options.minmax[i]
 
       if (val > prevVal[i]) {
         if (res < val) {
@@ -124,8 +149,16 @@ export function chart(root, data) {
       return res
     }
 
-    if (proxy.minmax[0] !== min || proxy.minmax[1] !== max)
-      proxy.minmax = [min, max]
+    if (
+      proxy.options.minmax[0] !== min ||
+      proxy.options.minmax[1] !== max
+      // ||
+      // proxy.options.length !== length
+    )
+      proxy.options = {
+        minmax: [min, max],
+        // length,
+      }
   }
 
   function paint() {
@@ -155,20 +188,30 @@ export function chart(root, data) {
 
     if (!prevVal[0]) {
       prevVal = [yMin, yMax]
-      proxy.minmax = [yMin, yMax]
+      // prevLength = columns[0].length
+      proxy.options = {
+        minmax: [yMin, yMax],
+        // length: columns[0].length,
+      }
     }
 
     animation([yMin, yMax])
 
-    const yRatio = compYRatio(VIEW_HEIGHT, proxy.minmax[1], proxy.minmax[0])
+    const yRatio = compYRatio(
+      VIEW_HEIGHT,
+      proxy.options.minmax[1],
+      proxy.options.minmax[0]
+    )
     const xRatio = compXRatio(VIEW_WIDTH, columns[0].length)
-    yAxis(proxy.minmax[0], proxy.minmax[1])
+    yAxis(proxy.options.minmax[0], proxy.options.minmax[1])
 
     const yData = columns.filter(col => data.types[col[0]] === 'line')
     const xData = columns.filter(col => data.types[col[0]] !== 'line')[0]
 
     yData
-      .map(toCoords(xRatio, yRatio, DPI_HEIGHT, PADDING, proxy.minmax[0]))
+      .map(
+        toCoords(xRatio, yRatio, DPI_HEIGHT, PADDING, proxy.options.minmax[0])
+      )
       .forEach((coords, i) => {
         const color = data.colors[yData[i][0]]
         line(context, coords, color)

@@ -55,7 +55,6 @@ export function line(context, coords, color) {
   context.beginPath()
   context.lineWidth = 4
   context.strokeStyle = color ?? '#000'
-
   for (const [x, y] of coords) {
     context.lineTo(x, y)
   }
